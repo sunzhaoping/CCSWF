@@ -1,11 +1,3 @@
-//
-//  CCSWFNode.h
-//  GSGGameSWF
-//
-//  Created by dario on 13-02-25.
-//  Modify by chenee (chenee543216@gmail.com) on 13-05-20
-//  @chenee: 1\change Objective-C to C++ ;2\change opengl es 1.1 to opengl es 2.0
-//
 #ifndef CCSWF_NODE
 #define CCSWF_NODE
 
@@ -14,39 +6,6 @@
 #include "CCSWFNodeGroup.h"
 
 using namespace cocos2d;
-//@class CCSWFNode_imp;
-//
-//@interface CCSWFNode : Sprite <CCTargetedTouchDelegate>
-//{
-//    CCSWFNode_imp *imp;
-//    GLfloat m_movieWidth;
-//    GLfloat m_movieHeight;
-//    GLfloat m_localScaleX;
-//    GLfloat m_localScaleY;
-//    GLfloat m_scaleX;
-//    GLfloat m_scaleY;
-//    NSMutableArray *m_touchEvents;
-//
-//}
-//
-//@property (nonatomic, assign) NSString *movieName;
-//
-//+(id) nodeWithSWFFile:(NSString*)file;
-//-(id) initWithSWFFile:(NSString*)file;
-//
-//@end
-//@interface CCSWFNode_imp : NSObject
-//{
-//@public
-//    gameswf::gc_ptr<gameswf::player> m_player;
-//    gameswf::gc_ptr<gameswf::root>	m_movie;
-//}
-//
-//-(id) initWithSWFFile:(NSString*)file;
-//
-//@end
-
-
 
 class CCSWFNode_imp;
 class CCSWFNodeGroup;
@@ -63,7 +22,6 @@ private:
     GLfloat m_localScaleY;
     GLfloat m_scaleX;
     GLfloat m_scaleY;
-//    NSMutableArray *m_touchEvents;
     Array* m_touchEvents;
     
     cocos2d::Object* m_listener;

@@ -1,11 +1,3 @@
-//
-//  CCSWFNodeGroup.h
-//  TangooBaby
-//
-//  Created by chenee on 13-5-20.
-//  Copyright chenee543216@gmail.com 2013. All rights reserved.
-//
-
 #ifndef CCSWF_NODE_GROUP
 #define CCSWF_NODE_GROUP
 

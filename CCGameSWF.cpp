@@ -1,13 +1,3 @@
-//
-//  CCGameSWF.m
-//  CCGameSWF
-//
-//  Created by dario on 13-02-22.
-//  Modify by chenee (chenee543216@gmail.com) on 13-05-20
-//  @chenee: 1\change Objective-C to C++ ;2\change opengl es 1.1 to opengl es 2.0
-//
-//
-
 #import "CCGameSWF.h"
 #import "CCGameSWF.h"
 #import "gameswf.h"
@@ -23,7 +13,6 @@ static tu_file* CCGameSWF_file_opener           (const char* url_or_path);      
 static void     CCGameSWF_log_handler           (bool error, const char* message);                                  // log handler //
 
 #pragma mark - CCGameSWF implementation
-//@implementation CCGameSWF
 
 CCGameSWF* CCGameSWF::sharedInstance()
 {
@@ -38,95 +27,34 @@ CCGameSWF* CCGameSWF::sharedInstance()
 
 bool CCGameSWF::init()
 {
-//    self = [super init];
-//    if (self)
-//    {
-//        m_fscommandListeners = [[NSMutableDictionary alloc] init];
         m_fscommandListeners  = new cocos2d::Array();
         gameswf::register_file_opener_callback(&CCGameSWF_file_opener);
         gameswf::register_fscommand_callback(&CCGameSWF_fscommand_handler);
 #ifdef DEBUG
         gameswf::register_log_callback(&CCGameSWF_log_handler);
 #endif
-        
-        // TODO: Enable audio //
-        //    sound = gameswf::create_sound_handler_openal();
-        //    gameswf::set_sound_handler(sound);
         gameswf::set_sound_handler(0);
         
         gameswf::render_handler* render = gameswf::create_render_handler_ogles();
         gameswf::set_render_handler(render);
         
         gameswf::set_glyph_provider(gameswf::create_glyph_provider_tu());
-//    }
-	
-//	return self;
-    return true;
+        return true;
 }
 
 void CCGameSWF::dealloc()
 {
-//    [m_fscommandListeners release];
     m_fscommandListeners->release();
-    
-//    [super dealloc];
 }
 
 #pragma mark - fscommand handlers
-//void addFscommandResponder:(id<CCSWFFscommandResponder>)responder forMovieNamed:(NSString*)movieName
-//{
-//    NSMutableArray *movieResponders = [m_fscommandListeners objectForKey:movieName];
-//    if (!movieResponders)
-//    {
-//        movieResponders = [NSMutableArray array];
-//        [m_fscommandListeners setObject:movieResponders forKey:movieName];
-//    }
-//    
-//    [movieResponders addObject:responder];
-//}
-//
-//-(void) removeFscommandResponder:(id<CCSWFFscommandResponder>)responder forMovieNamed:(NSString*)movieName
-//{
-//    NSMutableArray *movieResponders = [m_fscommandListeners objectForKey:movieName];
-//    if (!movieResponders)
-//    {
-//        NSLog(@"ERROR: trying to remove fscommand responder from empty responder list, did you pass the correct movie name?");
-//        return;
-//    }
-//    
-//    [movieResponders removeObject:responder];
-//    
-//    if ([movieResponders count] == 0)
-//    {
-//        [m_fscommandListeners removeObjectForKey:movieName];
-//    }
-//}
 
-//void movieNamed:(NSString*)movieName sentCommand:(NSString*)command withArguments:(NSString*)args
-////void movieNamedSentCommandWithArguments(cocos2d::String* movieName,cocos2d::String*command,cocos2d::String*args)
-//{
-//    NSMutableArray *movieResponders = [m_fscommandListeners objectForKey:movieName];
-//    if (movieResponders)
-//    {
-//        for (int i = 0; i < [movieResponders count]; ++i)
-//        {
-//            id<CCSWFFscommandResponder> responder = [movieResponders objectAtIndex:i];
-//            if ([responder respondsToSelector:@selector(movieNamed:sentCommand:withArguments:)])
-//            {
-//                [responder movieNamed:movieName sentCommand:command withArguments:args];
-//            }
-//        }
-//    }
-//}
-//
-//@end
 
 
 #pragma mark - Callback implementations
 
 void CCGameSWF_fscommand_handler (gameswf::character* movie, const char* command, const char* arg)
 {
-//    [[CCGameSWF sharedInstance] movieNamed:[NSString stringWithUTF8String:movie->m_name.c_str()] sentCommand:[NSString stringWithUTF8String:command] withArguments:[NSString stringWithUTF8String:arg]];
     
 }
 
@@ -237,8 +165,6 @@ tu_file* CCGameSWF_file_opener (const char* url_or_path)
 
 static void CCGameSWF_log_handler (bool error, const char* message)
 {
-//    NSLog(@"%@: %s", (error ? @"::ERROR: " : @":::: "), message);
-
     if (error) {
         CCLOG("::ERROR:: %s",message);
     }else{

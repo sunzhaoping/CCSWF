@@ -1,12 +1,3 @@
-//
-//  CCSWFNode.m
-//  GSGGameSWF
-//
-//  Created by dario on 13-02-25.
-//  Modify by chenee (chenee543216@gmail.com) on 13-05-20
-//  @chenee: 1\change Objective-C to C++ ;2\change opengl es 1.1 to opengl es 2.0
-//
-
 #import "CCSWFNode.h"
 #import "CCGameSWF.h"
 #import "cocos2d.h"
@@ -19,69 +10,19 @@
 
 using namespace cocos2d;
 
-//@interface CCSWFNode_touchContainer : NSObject
-//{
-//    CGPoint m_position;
-//    int m_state;
-//}
-//
-//@property (readonly) CGPoint position;
-//@property (readonly) int state;
-//
-//+(id) touchContainerWithPosition:(CGPoint)position andState:(int)state;
-//-(id) initWithPosition:(CGPoint)position andState:(int)state;
-//
-//@end
 class CCSWFNode_touchContainer : public cocos2d::Node
 {
     cocos2d::Point m_position;
     int m_state;
     CCSWFNode_touchContainer(cocos2d::Point position,int state);
-//    bool touchContainerWithPosition(cocos2d::Point position, int state);
-
 };
 
-
-//@implementation CCSWFNode_touchContainer
-
-//@synthesize position = m_position;
-//@synthesize state = m_state;
 CCSWFNode_touchContainer::CCSWFNode_touchContainer(cocos2d::Point position, int state)
 {
     m_position = position;
     m_state = state;
 }
-//bool CCSWFNode_touchContainer::touchContainerWithPosition(cocos2d::Point position, int state)
-//{
-////    return [[CCSWFNode_touchContainer alloc] initWithPosition:position andState:state];
-//    return true;
-//}
-//
-//void CCSWFNode_touchContainer::initWithPositionAndState(cocos2d::Point position, int state)
-//{
-////    self = [super init];
-////    if (self)
-////    {
-//        m_position = position;
-//        m_state = state;
-////    }
-////    return self;
-//}
-//
-//@end
 
-
-
-//@interface CCSWFNode_imp : NSObject
-//{
-//@public
-//    gameswf::gc_ptr<gameswf::player> m_player;
-//    gameswf::gc_ptr<gameswf::root>	m_movie;
-//}
-//
-//-(id) initWithSWFFile:(NSString*)file;
-//
-//@end
 class CCSWFNode_imp : public cocos2d::Node
 {
 public:
@@ -89,11 +30,8 @@ public:
     gameswf::gc_ptr<gameswf::root>	m_movie;
     
     bool initWithSWFFile(const char *file);
-//    void dealloc();
 
 };
-
-//@implementation CCSWFNode_imp
 
 bool CCSWFNode_imp::initWithSWFFile(const char *file)
 {
@@ -104,41 +42,22 @@ bool CCSWFNode_imp::initWithSWFFile(const char *file)
     {
         return false;
     }
-//    self = [super init];
-//    if (self)
-//    {
-        // make sure CCGameSWF is initialized //
-//        [CCGameSWF sharedInstance];
+
         CCGameSWF::sharedInstance();
         m_player = new gameswf::player();
         m_movie = m_player->load_file(pathKey.c_str());
         if (m_movie == NULL)
         {
             printf("ERROR: Cannot open input file %s", file);
-//            [self release];
+
             return false;
         }
-//    }
-//	
-//	return self;
     return true;
 }
 
-//void CCSWFNode_imp::dealloc()
-//{
-//    delete m_movie;
-//    delete m_player;
-////    [super dealloc];
-//}
-
-//@end
-
-
-
-//@implementation CCSWFNode
 CCSWFNode::CCSWFNode()
 {
-//    CCLOG("CCSWFNode init ....");
+
 }
 CCSWFNode::~CCSWFNode()
 {
@@ -148,12 +67,10 @@ CCSWFNode::~CCSWFNode()
     this->imp->m_player = NULL;
     
     delete imp;
-//    CCLOG("CCSWFNode delete ....");
 }
 
 cocos2d::String* CCSWFNode::movieName()
 {
-//    return [NSString stringWithUTF8String:imp->m_movie->m_movie->m_name.c_str()];
     return cocos2d::String::createWithFormat("%s", imp->m_movie->m_movie->m_name.c_str());
 }
 
@@ -162,10 +79,6 @@ void CCSWFNode::setMovieName(char *movieName)
     imp->m_movie->m_movie->m_name = movieName;// UTF8String];
 }
 
-//+(id) nodeWithSWFFile:(NSString*)file
-//{
-//    return [[[CCSWFNode alloc] initWithSWFFile:file] autorelease];
-//}
 CCSWFNode* CCSWFNode::create(const char* file)
 {
     CCSWFNode* swf = new CCSWFNode();
@@ -179,14 +92,9 @@ CCSWFNode* CCSWFNode::create(const char* file)
 
 bool CCSWFNode::initWithSWFFile(const char* file)
 {
-//    self = [super init];
-//    if (self)
-//    {
-//        imp = [[CCSWFNode_imp alloc] initWithSWFFile:file];
     imp = new CCSWFNode_imp();
     if (!imp->initWithSWFFile(file))
     {
-//            [self release];
         imp->release();
         return false;
     }
@@ -210,19 +118,11 @@ bool CCSWFNode::initWithSWFFile(const char* file)
     this->repeat = false;
     this->iFrameCount = imp->m_movie->get_frame_count();
 
-//        [self setContentSize:CGSizeMake(m_movieWidth, m_movieHeight)];
-//        [self setScale:1.0];
-//        [self setAnchorPoint:ccp(0.5f, 0.5f)];
-//    }
     return true;
 }
 void CCSWFNode::setFlipX(bool flipX)
 {
-//    [super setFlipX:flipX];
     if (flipX) {
-//        m_localScaleX *= -1;
-//        m_scaleX = m_scaleX*-1;
-//        [super setScaleX:m_localScaleX*-1];
         setScaleX(m_localScaleX * -1);
         
     }
@@ -242,8 +142,6 @@ float CCSWFNode::scale()
 void CCSWFNode::setScale(float scale)
 {
     m_scaleX = m_scaleY = scale;
-//    [super setScaleX:m_localScaleX * m_scaleX];
-//    [super setScaleY:m_localScaleY * m_scaleY];
     setScaleX(m_localScaleX*m_scaleX);
     setScaleY(m_localScaleY*m_scaleY);
 }
@@ -256,8 +154,6 @@ float CCSWFNode::scaleX()
 void CCSWFNode::setScaleX(float scaleX)
 {
     m_scaleX = scaleX;
-//    [super setScaleX:m_localScaleX * m_scaleX];
-//    setScaleX(m_localScaleX*m_scaleX);
     cocos2d::Sprite::setScaleX(m_scaleX);
 }
 
@@ -269,50 +165,21 @@ float CCSWFNode::scaleY()
 void CCSWFNode::setScaleY(float scaleY)
 {
     m_scaleY = scaleY;
-//    [super setScaleY:m_localScaleY];
-//    setScaleY(m_localScaleY);
     Sprite::setScaleY(m_scaleY);
     
 }
 
-//void CCSWFNode::dealloc()
-//{
-////    m_touchEvents->release();
-////    [m_touchEvents release];
-////    [super dealloc];
-//    this->stopAction();
-////    this->imp->dealloc();
-//    delete imp;
-//}
-
 void CCSWFNode::onEnterTransitionDidFinish()
 {
-    
-//    [self scheduleUpdate];
-//    if(isRuning)
-//        return;
-//    
-//    this->isRuning = true;
-////    this->imp->m_movie->goto_frame(48);
-////    this->imp->m_movie->set_play_state((gameswf::character::play_state)1);
-////    this->imp->m_movie->set_play_run();
-//    schedule(schedule_selector(CCSWFNode::update),1/2);
-    
-//    schedule(schedule_selector(CCSWFNode::update));
-
-
-//    [[CCTouchDispatcher sharedDispatcher] addTargetedDelegate:self priority:1 swallowsTouches:YES];
 }
 
 void CCSWFNode::onExit()
 {
-//    [self unscheduleAllSelectors];
     if(! isRuning)
         return;
     
     unschedule(schedule_selector(CCSWFNode::update));
     this->isRuning = false;
-//    [[CCTouchDispatcher sharedDispatcher] removeDelegate:self];
 }
 void CCSWFNode::runAction(Object* psender)
 {
@@ -371,63 +238,9 @@ bool CCSWFNode::getRepeat()
     return repeat;
 }
 
-//-(CGPoint) getTouchInMovieCoordinates:(UITouch*)touch
-//{
-//    // find the movie rect in pixels //
-//    CGRect movieRect = CGRectMake(
-//                                  self.position.x - (self.contentSize.width * super.scaleX * self.anchorPoint.x),
-//                                  self.position.y - (self.contentSize.height * -super.scaleY * self.anchorPoint.y),
-//                                  self.contentSize.width * super.scaleX,
-//                                  self.contentSize.height * -super.scaleY
-//                                  );
-//    
-//    // find the touch position in pixels //
-//    CGPoint touchPoint = ccpMult([[CCDirector sharedDirector] convertToGL:[touch locationInView:[touch view]]], CC_CONTENT_SCALE_FACTOR());
-//    
-//    // find the touch position in respect to the movie //
-//    CGPoint touchInMovie = ccp(
-//                               (touchPoint.x - movieRect.origin.x) / m_scaleX,
-//                               ((self.contentSize.height * -super.scaleY) - (touchPoint.y - movieRect.origin.y)) / m_scaleY
-//                               );
-//    
-//    return touchInMovie;
-//}
-
-//- (BOOL)ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event
-//{
-//    // make rect for movie //
-//    CGRect movieRect = CGRectMake(0, 0, (self.contentSize.width * super.scaleX), (self.contentSize.height * -super.scaleY));
-//    // find the touch position in pixels //
-//    CGPoint touchPoint = [self getTouchInMovieCoordinates:touch];
-//    BOOL isInMovie = CGRectContainsPoint(movieRect, touchPoint);
-//    [m_touchEvents addObject:[CCSWFNode_touchContainer touchContainerWithPosition:touchPoint andState:0]];
-//    [m_touchEvents addObject:[CCSWFNode_touchContainer touchContainerWithPosition:touchPoint andState:1]];
-//    return isInMovie;
-//}
-//
-//- (void)ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event
-//{
-//    [m_touchEvents addObject:[CCSWFNode_touchContainer touchContainerWithPosition:[self getTouchInMovieCoordinates:touch] andState:1]];
-//}
-//
-//- (void)ccTouchEnded:(UITouch *)touch withEvent:(UIEvent *)event
-//{
-//    [m_touchEvents addObject:[CCSWFNode_touchContainer touchContainerWithPosition:[self getTouchInMovieCoordinates:touch] andState:0]];
-//}
-//
-//- (void)ccTouchCancelled:(UITouch *)touch withEvent:(UIEvent *)event
-//{
-//    [m_touchEvents addObject:[CCSWFNode_touchContainer touchContainerWithPosition:[self getTouchInMovieCoordinates:touch] andState:0]];
-//}
 
 void CCSWFNode::update(float dt)
 {
-//    if (m_touchEvents.count)
-//    {
-//        CCSWFNode_touchContainer *touch = [m_touchEvents objectAtIndex:0];
-//        imp->m_movie->notify_mouse_state(touch.position.x, touch.position.y, touch.state);
-//        [m_touchEvents removeObjectAtIndex:0];
-//    }
     bool tobestop = false;
     int iFrame = imp->m_movie->get_current_frame();
     if (m_listener && iFrame == iListenFrame) {
@@ -446,10 +259,6 @@ void CCSWFNode::update(float dt)
             (this->m_endListener->*m_pfnEndSelector)(this);
         }
     }
-
-//    CCLOG(".....");
-    // TODO: Enable sound //
-    // sound->advance(dt);
 }
 #define STRINGIFY(A)  #A
 const char* ColorVertexShader1 = STRINGIFY(
