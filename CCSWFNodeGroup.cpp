@@ -1,18 +1,19 @@
 //
-//  CCSWFNodeGroup.cpp
+//  SWFNodeGroup.cpp
 //  TangooBaby
 //
 //  Created by chenee on 13-5-20.
 //  Copyright chenee543216@gmail.com 2013. All rights reserved.
 //
 
-#import "CCSWFNodeGroup.h"
+#include "CCSWFNodeGroup.h"
+#include "CCSWFNode.h"
 
-CCSWFNodeGroup::CCSWFNodeGroup()
+SWFNodeGroup::SWFNodeGroup()
 {
     isSingleton = true;
 }
-CCSWFNodeGroup::~CCSWFNodeGroup()
+SWFNodeGroup::~SWFNodeGroup()
 {
     CCLOG("delete group");
    
@@ -21,110 +22,110 @@ CCSWFNodeGroup::~CCSWFNodeGroup()
     this->removeAllChildrenWithCleanup(true);
     this->removeFromParentAndCleanup(true);
 }
-void CCSWFNodeGroup::addChild(cocos2d::Node *child,int zOrder)
+void SWFNodeGroup::addChild(cocos2d::Node *child,int zOrder)
 {
     Node::addChild(child,zOrder);
-    ((CCSWFNode*)child)->setGrouped(true);
+    ((SWFNode*)child)->setGrouped(true);
 }
-void CCSWFNodeGroup::addChild(cocos2d::Node *child)
+void SWFNodeGroup::addChild(cocos2d::Node *child)
 {
     this->addChild(child, 0);
 }
 
-void CCSWFNodeGroup::setFlipX(bool flipX)
+void SWFNodeGroup::setFlipX(bool flipX)
 {
     cocos2d::Object* child;
     CCARRAY_FOREACH(this->getChildren(), child)
     {
-        CCSWFNode* pNode = (CCSWFNode*) child;
+        SWFNode* pNode = (SWFNode*) child;
         pNode->setFlipX(flipX);
     }
 }
-void CCSWFNodeGroup::setFlipY(bool flipY)
+void SWFNodeGroup::setFlipY(bool flipY)
 {
     cocos2d::Object* child;
     CCARRAY_FOREACH(this->getChildren(), child)
     {
-        CCSWFNode* pNode = (CCSWFNode*) child;
+        SWFNode* pNode = (SWFNode*) child;
         pNode->setFlipX(flipY);
     }
 }
-float CCSWFNodeGroup::scale()
+float SWFNodeGroup::scale()
 {
     return 1.0f;
 }
 
-void CCSWFNodeGroup::setScale(float scale)
+void SWFNodeGroup::setScale(float scale)
 {
     cocos2d::Object* child;
     CCARRAY_FOREACH(this->getChildren(), child)
     {
-        CCSWFNode* pNode = (CCSWFNode*) child;
+        SWFNode* pNode = (SWFNode*) child;
         pNode->setScale(scale);
     }
 }
 
-float CCSWFNodeGroup::scaleX()
+float SWFNodeGroup::scaleX()
 {
     return 1.0f;
 
 }
 
-void CCSWFNodeGroup::setScaleX(float scaleX)
+void SWFNodeGroup::setScaleX(float scaleX)
 {
     cocos2d::Object* child;
     CCARRAY_FOREACH(this->getChildren(), child)
     {
-        CCSWFNode* pNode = (CCSWFNode*) child;
+        SWFNode* pNode = (SWFNode*) child;
         pNode->setScaleX(scaleX);
     }
 }
 
-float CCSWFNodeGroup::scaleY()
+float SWFNodeGroup::scaleY()
 {
     return 1.0f;
 }
 
-void CCSWFNodeGroup::setScaleY(float scaleY)
+void SWFNodeGroup::setScaleY(float scaleY)
 {
     cocos2d::Object* child;
     CCARRAY_FOREACH(this->getChildren(), child)
     {
-        CCSWFNode* pNode = (CCSWFNode*) child;
+        SWFNode* pNode = (SWFNode*) child;
         pNode->setScaleY(scaleY);
     }
 }
 
-void CCSWFNodeGroup::runAction(CCSWFNode* swf)
+void SWFNodeGroup::runAction(Node* swf)
 {
     if (isSingleton) {
         cocos2d::Object* child;
         CCARRAY_FOREACH(this->getChildren(), child)
         {
-            CCSWFNode* pNode = (CCSWFNode*) child;
+            SWFNode* pNode = (SWFNode*) child;
             if (pNode != swf) {
                 pNode->stopAction();
             }
         }
     }
     
-    swf->runAction(this);
+    ((SWFNode*)swf)->runAction(this);
 }
-void CCSWFNodeGroup::stopAction()
+void SWFNodeGroup::stopAction()
 {
     cocos2d::Object* child;
     CCARRAY_FOREACH(this->getChildren(), child)
     {
-        CCSWFNode* pNode = (CCSWFNode*) child;
+        SWFNode* pNode = (SWFNode*) child;
         pNode->stopAction();
     }
 }
-bool CCSWFNodeGroup::Runing()
+bool SWFNodeGroup::Runing()
 {
     cocos2d::Object* child;
     CCARRAY_FOREACH(this->getChildren(), child)
     {
-        CCSWFNode* pNode = (CCSWFNode*) child;
+        SWFNode* pNode = (SWFNode*) child;
         if(pNode->Runing()){
             return true;
         }

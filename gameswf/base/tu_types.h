@@ -15,7 +15,7 @@
 #include <stdio.h>
 
 
-#if defined(__i386__) || defined(_WIN32) || defined(__GNUC__)
+#if defined(__i386__) || defined(_WIN32) || defined(__GNUC__)  || defined(__ANDROID__)
 
 	// On known little-endian platforms, define this stuff.
 	#define _TU_LITTLE_ENDIAN_	1
@@ -61,7 +61,6 @@
 	#endif // SDL_BYTEORDER == SDL_LIL_ENDIAN
 
 #endif	// not __I366__ and not _WIN32
-
 
 typedef Uint8 uint8;
 typedef Sint8 sint8;

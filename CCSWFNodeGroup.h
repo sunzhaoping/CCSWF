@@ -2,20 +2,17 @@
 #define CCSWF_NODE_GROUP
 
 #include "cocos2d.h"
-#include "CCSWFNode.h"
 
 using namespace cocos2d;
 
-class CCSWFNode;
-
-class CCSWFNodeGroup : public cocos2d::Node
+class SWFNodeGroup : public cocos2d::Node
 {
 private:
     bool isSingleton;
     
 public:
-    CCSWFNodeGroup();
-    ~CCSWFNodeGroup();
+    SWFNodeGroup();
+    ~SWFNodeGroup();
     void addChild(cocos2d::Node *child);
     void addChild(cocos2d::Node *child,int zOrder);
     
@@ -32,7 +29,7 @@ public:
     void setScaleY(float scaleY);
     
     void stopAction();
-    void runAction(CCSWFNode* swf);
+    void runAction(Node* swf);
     bool Runing();
 
 };

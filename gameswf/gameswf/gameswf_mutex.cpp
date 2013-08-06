@@ -125,7 +125,11 @@ namespace gameswf
 
 	void tu_thread::kill()
 	{
-		pthread_cancel(m_thread);
+#ifdef __ANDROID__
+       // pthread_exit(0);
+#else
+        pthread_cancel(m_thread);
+#endif
 	}
 
 	void tu_thread::start()

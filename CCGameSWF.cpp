@@ -1,8 +1,7 @@
-#import "CCGameSWF.h"
-#import "CCGameSWF.h"
-#import "gameswf.h"
-#import "gameswf_character.h"
-#import "tu_file.h"
+#include "CCGameSWF.h"
+#include "gameswf/gameswf/gameswf.h"
+#include "gameswf/gameswf/gameswf_character.h"
+#include "gameswf/base/tu_file.h"
 
 using namespace cocos2d;
 
@@ -12,20 +11,20 @@ static void     CCGameSWF_fscommand_handler     (gameswf::character* movie, cons
 static tu_file* CCGameSWF_file_opener           (const char* url_or_path);                                          // file opener //
 static void     CCGameSWF_log_handler           (bool error, const char* message);                                  // log handler //
 
-#pragma mark - CCGameSWF implementation
+#pragma mark - GameSWF implementation
 
-CCGameSWF* CCGameSWF::sharedInstance()
+GameSWF* GameSWF::sharedInstance()
 {
-    static CCGameSWF *s_ccGameSWF_sharedInstance = NULL;
+    static GameSWF *s_ccGameSWF_sharedInstance = NULL;
     if (!s_ccGameSWF_sharedInstance)
     {
-        s_ccGameSWF_sharedInstance = new CCGameSWF();
+        s_ccGameSWF_sharedInstance = new GameSWF();
         s_ccGameSWF_sharedInstance->init();
     }
     return s_ccGameSWF_sharedInstance;
 }
 
-bool CCGameSWF::init()
+bool GameSWF::init()
 {
         m_fscommandListeners  = new cocos2d::Array();
         gameswf::register_file_opener_callback(&CCGameSWF_file_opener);
@@ -42,7 +41,7 @@ bool CCGameSWF::init()
         return true;
 }
 
-void CCGameSWF::dealloc()
+void GameSWF::dealloc()
 {
     m_fscommandListeners->release();
 }

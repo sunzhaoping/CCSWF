@@ -1,12 +1,13 @@
-#import "CCSWFNode.h"
-#import "CCGameSWF.h"
-#import "cocos2d.h"
-#import "gameswf.h"
-#import "gameswf_player.h"
-#import "gameswf_root.h"
-#import "ccMacros.h"
-#import "gameswf_types.h"
-#import "gameswf_impl.h"
+#include "CCSWFNode.h"
+#include "CCSWFNodeGroup.h"
+#include "CCGameSWF.h"
+#include "cocos2d.h"
+#include "gameswf/gameswf/gameswf.h"
+#include "gameswf/gameswf/gameswf_player.h"
+#include "gameswf/gameswf/gameswf_root.h"
+#include "ccMacros.h"
+#include "gameswf/gameswf/gameswf_types.h"
+#include "gameswf/gameswf/gameswf_impl.h"
 
 using namespace cocos2d;
 
@@ -43,7 +44,7 @@ bool CCSWFNode_imp::initWithSWFFile(const char *file)
         return false;
     }
 
-        CCGameSWF::sharedInstance();
+        GameSWF::sharedInstance();
         m_player = new gameswf::player();
         m_movie = m_player->load_file(pathKey.c_str());
         if (m_movie == NULL)
@@ -55,33 +56,33 @@ bool CCSWFNode_imp::initWithSWFFile(const char *file)
     return true;
 }
 
-CCSWFNode::CCSWFNode()
+SWFNode::SWFNode()
 {
 
 }
-CCSWFNode::~CCSWFNode()
+SWFNode::~SWFNode()
 {
     this->stopAction();
     this->removeFromParentAndCleanup(true);
-    this->imp->m_movie = NULL;
-    this->imp->m_player = NULL;
+    ((CCSWFNode_imp*)this->imp)->m_movie = NULL;
+     ((CCSWFNode_imp*)this->imp)->m_player = NULL;
     
     delete imp;
 }
 
-cocos2d::String* CCSWFNode::movieName()
+cocos2d::String* SWFNode::movieName()
 {
-    return cocos2d::String::createWithFormat("%s", imp->m_movie->m_movie->m_name.c_str());
+    return cocos2d::String::createWithFormat("%s",  ((CCSWFNode_imp*)this->imp)->m_movie->m_movie->m_name.c_str());
 }
 
-void CCSWFNode::setMovieName(char *movieName)
+void SWFNode::setMovieName(char *movieName)
 {
-    imp->m_movie->m_movie->m_name = movieName;// UTF8String];
+     ((CCSWFNode_imp*)this->imp)->m_movie->m_movie->m_name = movieName;// UTF8String];
 }
 
-CCSWFNode* CCSWFNode::create(const char* file)
+SWFNode* SWFNode::create(const char* file)
 {
-    CCSWFNode* swf = new CCSWFNode();
+    SWFNode* swf = new SWFNode();
     if (! swf->initWithSWFFile(file)) {
         swf->release();
         return NULL;
@@ -90,18 +91,18 @@ CCSWFNode* CCSWFNode::create(const char* file)
     return swf;
 }
 
-bool CCSWFNode::initWithSWFFile(const char* file)
+bool SWFNode::initWithSWFFile(const char* file)
 {
     imp = new CCSWFNode_imp();
-    if (!imp->initWithSWFFile(file))
+    if (! ((CCSWFNode_imp*)this->imp)->initWithSWFFile(file))
     {
         imp->release();
         return false;
     }
-    m_movieWidth = imp->m_movie->m_def->m_frame_size.m_x_max - imp->m_movie->m_def->m_frame_size.m_x_min;
-    m_movieHeight = imp->m_movie->m_def->m_frame_size.m_y_max - imp->m_movie->m_def->m_frame_size.m_y_min;
-    m_localScaleX = (imp->m_movie->get_movie_width() / m_movieWidth);
-    m_localScaleY = -(imp->m_movie->get_movie_height() / m_movieHeight);
+    m_movieWidth =  ((CCSWFNode_imp*)this->imp)->m_movie->m_def->m_frame_size.m_x_max - ((CCSWFNode_imp*)this->imp)->m_movie->m_def->m_frame_size.m_x_min;
+    m_movieHeight = ((CCSWFNode_imp*)this->imp)->m_movie->m_def->m_frame_size.m_y_max - ((CCSWFNode_imp*)this->imp)->m_movie->m_def->m_frame_size.m_y_min;
+    m_localScaleX = (((CCSWFNode_imp*)this->imp)->m_movie->get_movie_width() / m_movieWidth);
+    m_localScaleY = -(((CCSWFNode_imp*)this->imp)->m_movie->get_movie_height() / m_movieHeight);
     m_scaleX = 1.0;
     m_scaleY = 1.0;
     
@@ -116,79 +117,79 @@ bool CCSWFNode::initWithSWFFile(const char* file)
     this->m_listener = NULL;
     this->m_endListener = NULL;
     this->repeat = false;
-    this->iFrameCount = imp->m_movie->get_frame_count();
+    this->iFrameCount = ((CCSWFNode_imp*)this->imp)->m_movie->get_frame_count();
 
     return true;
 }
-void CCSWFNode::setFlipX(bool flipX)
+void SWFNode::setFlipX(bool flipX)
 {
     if (flipX) {
         setScaleX(m_localScaleX * -1);
         
     }
 }
-void CCSWFNode::setFlipY(bool flipY)
+void SWFNode::setFlipY(bool flipY)
 {
     if (flipY) {
         setScaleY(m_localScaleY * -1);
     }
 }
-float CCSWFNode::scale()
+float SWFNode::scale()
 {
     CCAssert(m_scaleX == m_scaleY, "Node#scale. ScaleX != ScaleY. Don't know which one to return");
 	return m_scaleX;
 }
 
-void CCSWFNode::setScale(float scale)
+void SWFNode::setScale(float scale)
 {
     m_scaleX = m_scaleY = scale;
     setScaleX(m_localScaleX*m_scaleX);
     setScaleY(m_localScaleY*m_scaleY);
 }
 
-float CCSWFNode::scaleX()
+float SWFNode::scaleX()
 {
     return m_scaleX;
 }
 
-void CCSWFNode::setScaleX(float scaleX)
+void SWFNode::setScaleX(float scaleX)
 {
     m_scaleX = scaleX;
     cocos2d::Sprite::setScaleX(m_scaleX);
 }
 
-float CCSWFNode::scaleY()
+float SWFNode::scaleY()
 {
     return m_scaleY;
 }
 
-void CCSWFNode::setScaleY(float scaleY)
+void SWFNode::setScaleY(float scaleY)
 {
     m_scaleY = scaleY;
     Sprite::setScaleY(m_scaleY);
     
 }
 
-void CCSWFNode::onEnterTransitionDidFinish()
+void SWFNode::onEnterTransitionDidFinish()
 {
 }
 
-void CCSWFNode::onExit()
+void SWFNode::onExit()
 {
     if(! isRuning)
         return;
     
-    unschedule(schedule_selector(CCSWFNode::update));
+    unschedule(schedule_selector(SWFNode::update));
     this->isRuning = false;
 }
-void CCSWFNode::runAction(Object* psender)
+void SWFNode::runAction(Object* psender)
 {
     if(isRuning)
         return;
     
     //if in singleton group we stop other sibling.
     if (isGrouped) {
-       CCSWFNodeGroup* g = (CCSWFNodeGroup*)this->getParent();
+       SWFNodeGroup* g = (SWFNodeGroup*)this->getParent();
         if (g->getSingleton()) {
             g->stopAction();
         }
@@ -196,20 +197,20 @@ void CCSWFNode::runAction(Object* psender)
     
     this->isRuning = true;
     //reset 
-    this->imp->m_movie->goto_frame(0);
-    this->imp->m_movie->set_play_run();
+    ((CCSWFNode_imp*)this->imp)->m_movie->goto_frame(0);
+    ((CCSWFNode_imp*)this->imp)->m_movie->set_play_run();
     
-    schedule(schedule_selector(CCSWFNode::update),1/2);
+    schedule(schedule_selector(SWFNode::update),1/2);
 }
-void CCSWFNode::stopAction()
+void SWFNode::stopAction()
 {
     if(! isRuning)
         return;
-    unschedule(schedule_selector(CCSWFNode::update));
+    unschedule(schedule_selector(SWFNode::update));
     this->isRuning = false;
 }
 
-void CCSWFNode::addFrameListener(int iFrame, cocos2d::Object* target,SEL_MenuHandler selector)
+void SWFNode::addFrameListener(int iFrame, cocos2d::Object* target,SEL_MenuHandler selector)
 {
     CCAssert(target != NULL, "swf action should not be NULL");
 
@@ -222,27 +223,27 @@ void CCSWFNode::addFrameListener(int iFrame, cocos2d::Object* target,SEL_MenuHan
         iListenFrame = iFrame;
     }
 }
-void CCSWFNode::setNextAction(CCSWFNode* target)
+void SWFNode::setNextAction(SWFNode* target)
 {
     CCAssert(target != NULL, "next swf action should not be NULL");
     
     m_endListener = target;
-    m_pfnEndSelector = menu_selector(CCSWFNode::runAction);
+    m_pfnEndSelector = menu_selector(SWFNode::runAction);
 }
-void CCSWFNode::setRepeat(bool flag)
+void SWFNode::setRepeat(bool flag)
 {
     this->repeat = flag;
 }
-bool CCSWFNode::getRepeat()
+bool SWFNode::getRepeat()
 {
     return repeat;
 }
 
 
-void CCSWFNode::update(float dt)
+void SWFNode::update(float dt)
 {
     bool tobestop = false;
-    int iFrame = imp->m_movie->get_current_frame();
+    int iFrame = ((CCSWFNode_imp*)this->imp)->m_movie->get_current_frame();
     if (m_listener && iFrame == iListenFrame) {
         (m_listener->*m_pfnSelector)(this);
     }
@@ -251,7 +252,7 @@ void CCSWFNode::update(float dt)
             tobestop = true;
         }
     }
-    imp->m_movie->advance(dt);
+    ((CCSWFNode_imp*)this->imp)->m_movie->advance(dt);
     
     if(tobestop){
         this->stopAction();
@@ -429,7 +430,7 @@ void render()
 
 
 
-void CCSWFNode::draw()
+void SWFNode::draw()
 {
     if (! isRuning) {
         return;
@@ -449,7 +450,7 @@ void CCSWFNode::draw()
 #if CC_ENABLE_GL_STATE_CACHE
     GL::useProgram(0);//valid program is NON_ZERO unsigned int
 #endif
-	imp->m_movie->display(&matrixMVP.mat[0]);
+	((CCSWFNode_imp*)this->imp)->m_movie->display(&matrixMVP.mat[0]);
     CHECK_GL_ERROR_DEBUG();
 
 //    render();

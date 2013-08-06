@@ -1,21 +1,16 @@
 #ifndef CCSWF_NODE
 #define CCSWF_NODE
 
-#import "cocos2d.h"
-#include "gameswf.h"
-#include "CCSWFNodeGroup.h"
+#include "cocos2d.h"
 
 using namespace cocos2d;
 
-class CCSWFNode_imp;
-class CCSWFNodeGroup;
-
-class CCSWFNode : public cocos2d::Sprite
+class SWFNode : public cocos2d::Sprite
 {
 private:
     bool isGrouped;
     bool isRuning;
-    CCSWFNode_imp *imp;
+    Node *imp;
     GLfloat m_movieWidth;
     GLfloat m_movieHeight;
     GLfloat m_localScaleX;
@@ -34,8 +29,8 @@ private:
     bool repeat;
     int iFrameCount;
 public:
-    CCSWFNode();
-    ~CCSWFNode();
+    SWFNode();
+    ~SWFNode();
 
     void setGrouped(bool flag){ isGrouped = flag;};
     bool getGrouped(){ return isGrouped;};
@@ -44,8 +39,8 @@ public:
     
     cocos2d::String* movieName();
     void setMovieName(char *movieName);
-//    CCSWFNode(char* file);
-    static CCSWFNode* create(const char* file);
+//    SWFNode(char* file);
+    static SWFNode* create(const char* file);
     bool initWithSWFFile(const char* file);
     void setFlipX(bool flipX);
     void setFlipY(bool flipY);
@@ -66,7 +61,7 @@ public:
     void runAction(Object* psender = NULL);
     bool Runing(){return isRuning;};
     void addFrameListener(int iFrame, cocos2d::Object* target,SEL_MenuHandler selector);
-    void setNextAction(CCSWFNode* target);
+    void setNextAction(SWFNode* target);
 
     void setRepeat(bool flag);
     bool getRepeat();
