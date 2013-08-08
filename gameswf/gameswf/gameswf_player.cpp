@@ -42,6 +42,7 @@
 #include "as_global.h"
 #include "as_sharedobject.h"
 #include "as_mouse.h"
+#include "cocos2d.h"
 
 namespace gameswf
 {
@@ -689,8 +690,8 @@ namespace gameswf
 		{
 			if (gc_collector::debug_get_ref_count(it->second) > 1)
 			{
-				printf("memory leaks is found out: on exit movie_definition_sub ref_count > 1\n");
-				printf("this = 0x%p, ref_count = %d\n", it->second.get_ptr(),
+				CCLOG("memory leaks is found out: on exit movie_definition_sub ref_count > 1\n");
+				CCLOG("this = 0x%p, ref_count = %d\n", it->second.get_ptr(),
 				       gc_collector::debug_get_ref_count(it->second));
 
 				// to detect memory leaks
@@ -722,7 +723,7 @@ namespace gameswf
 		if (s_opener_function == NULL)
 		{
 			// Don't even have a way to open the file.
-			log_error("error: no file opener function; can't create movie.	"
+			CCLOG("error: no file opener function; can't create movie.	"
 				"See gameswf::register_file_opener_callback\n");
 			return NULL;
 		}
@@ -730,12 +731,12 @@ namespace gameswf
 		tu_file* in = s_opener_function(filename);
 		if (in == NULL)
 		{
-			log_error("failed to open '%s'; can't create movie.\n", filename);
+			CCLOG("failed to open '%s'; can't create movie.\n", filename);
 			return NULL;
 		}
 		else if (in->get_error())
 		{
-			log_error("error: file opener can't open '%s'\n", filename);
+			CCLOG("error: file opener can't open '%s'\n", filename);
 			delete in;
 			return NULL;
 		}
@@ -784,21 +785,21 @@ namespace gameswf
 		gc_ptr<gameswf::movie_definition>	md = create_movie(infile);
 		if (md == NULL)
 		{
-			fprintf(stderr, "error: can't create a movie from '%s'\n", infile);
+			CCLOG( "cocos2d-x: error: can't create a movie from '%s'\n", infile);
 			return NULL;
 		}
 
 		gc_ptr<gameswf::root>	m = md->create_instance();
 		if (m == NULL)
 		{
-			fprintf(stderr, "error: can't create movie instance\n");
+			CCLOG( "cocos2d-x: error: can't create movie instance\n");
 			return NULL;
 		}
 
 		int	movie_version = m->get_movie_version();
 
 	#ifdef _DEBUG
-		log_msg("Playing %s, swf version %d\n", infile, movie_version);
+		CCLOG( "cocos2d-x: Playing %s, swf version %d\n", infile, movie_version);
 	#else
 		IF_VERBOSE_PARSE(log_msg("Playing %s, swf version %d\n", infile, movie_version));
 	#endif

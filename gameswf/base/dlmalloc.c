@@ -4564,21 +4564,21 @@ void mSTATs()
   {
     unsigned long free, reserved, committed;
     vminfo (&free, &reserved, &committed);
-    fprintf(stderr, "free bytes       = %10lu\n", 
+    fprintf(stderr, "cocos2d-x: free bytes       = %10lu\n", 
             free);
-    fprintf(stderr, "reserved bytes   = %10lu\n", 
+    fprintf(stderr, "cocos2d-x: reserved bytes   = %10lu\n", 
             reserved);
-    fprintf(stderr, "committed bytes  = %10lu\n", 
+    fprintf(stderr, "cocos2d-x: committed bytes  = %10lu\n", 
             committed);
   }
 #endif
 
 
-  fprintf(stderr, "max system bytes = %10lu\n",
+  fprintf(stderr, "cocos2d-x: max system bytes = %10lu\n",
           (unsigned long)(mi.usmblks));
-  fprintf(stderr, "system bytes     = %10lu\n",
+  fprintf(stderr, "cocos2d-x: system bytes     = %10lu\n",
           (unsigned long)(mi.arena + mi.hblkhd));
-  fprintf(stderr, "in use bytes     = %10lu\n",
+  fprintf(stderr, "cocos2d-x: in use bytes     = %10lu\n",
           (unsigned long)(mi.uordblks + mi.hblkhd));
 
 
@@ -4586,9 +4586,9 @@ void mSTATs()
   {
     unsigned long kernel, user;
     if (cpuinfo (TRUE, &kernel, &user)) {
-      fprintf(stderr, "kernel ms        = %10lu\n", 
+      fprintf(stderr, "cocos2d-x: kernel ms        = %10lu\n", 
               kernel);
-      fprintf(stderr, "user ms          = %10lu\n", 
+      fprintf(stderr, "cocos2d-x: user ms          = %10lu\n", 
               user);
     }
   }

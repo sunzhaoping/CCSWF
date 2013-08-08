@@ -18,7 +18,7 @@
 #include <string.h>	// for strcmp and friends
 #include <new>	// for placement new
 
-
+#include "cocos2d.h"
 // If you prefer STL implementations of  gameswf::array<> (i.e. std::vector) and
 // hash<> (i.e. std::hash_map) instead of home cooking, then put
 // -D_TU_USE_STL=1 in your compiler flags, or do it in tu_config.h, or do
@@ -1402,7 +1402,6 @@ public:
 	{
 		m_union.m_local.m_bufsize_minus_length = sizeof(m_union.m_local.m_buffer);
 		m_union.m_local.m_buffer[0] = 0;
-
 		resize(str.size());
 		memcpy(get_buffer(), str.get_buffer(), size() + 1);
 	}

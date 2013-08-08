@@ -4,10 +4,9 @@
 // whatever you want with it.
 
 // OpenAL based sound handler for mobile units
+#ifdef TU_USE_OPENAL
 
 #include "gameswf_sound_handler_openal.h"
-
-#ifdef TU_USE_OPENAL
 
 namespace gameswf
 {

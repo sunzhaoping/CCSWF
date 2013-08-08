@@ -17,9 +17,14 @@
 #include "gameswf_log.h"
 #include "gameswf_mutex.h"
 #include "gameswf_listener.h"
-
+#ifdef __ANDROID__
+#include <AL/al.h>
+#include <AL/alc.h>
+#else
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>
+#endif
+
 
 namespace gameswf
 {

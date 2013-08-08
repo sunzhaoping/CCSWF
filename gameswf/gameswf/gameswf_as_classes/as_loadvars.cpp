@@ -515,7 +515,7 @@ namespace gameswf
 		if (i == n)
 		{
 			// '/' is not found
-			fprintf(stderr, "invalid url '%s'\n", url);
+			fprintf(stderr, "cocos2d-x: invalid url '%s'\n", url);
 			free(url);
 			return false;
 		}

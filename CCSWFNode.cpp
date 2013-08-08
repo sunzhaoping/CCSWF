@@ -49,7 +49,7 @@ bool CCSWFNode_imp::initWithSWFFile(const char *file)
         m_movie = m_player->load_file(pathKey.c_str());
         if (m_movie == NULL)
         {
-            printf("ERROR: Cannot open input file %s", file);
+            CCLOG("ERROR: Cannot open input file %s", file);
 
             return false;
         }
@@ -354,7 +354,7 @@ GLuint BuildShader(const char* source, GLenum shaderType)
     if (compileSuccess == GL_FALSE) {
         GLchar messages[256];
         glGetShaderInfoLog(shaderHandle, sizeof(messages), 0, &messages[0]);
-        printf("%s", messages);
+        CCLOG("%s", messages);
         exit(1);
     }
     
@@ -377,7 +377,7 @@ GLuint BuildProgram(const char* vertexShaderSource,
     if (linkSuccess == GL_FALSE) {
         GLchar messages[256];
         glGetProgramInfoLog(programHandle, sizeof(messages), 0, &messages[0]);
-        printf("%s", messages);
+        CCLOG("%s", messages);
         
         exit(1);
     }

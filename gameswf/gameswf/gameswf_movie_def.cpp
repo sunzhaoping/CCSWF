@@ -20,6 +20,7 @@
 #include "gameswf_fontlib.h"
 #include "jpeg.h"
 #include "zlib_adapter.h"
+#include "cocos2d.h"
 
 #if TU_CONFIG_LINK_TO_ZLIB
 #include <zlib.h>
@@ -69,7 +70,7 @@ namespace gameswf
 		while(in->get_position() < in->get_tag_end_position())
 		{
 			int	c = in->read_u8();
-			log_msg("%02X", c);
+			CCLOG("%02X", c);
 
 			if (c < 32) c = '.';
 			if (c > 127) c = '.';
@@ -312,7 +313,7 @@ namespace gameswf
 		// make sure font_id is resolved
 		if (in_import_table(font_id))
 		{
-			log_error("get_font(): font_id %d is still waiting to be imported\n",
+			CCLOG("get_font(): font_id %d is still waiting to be imported\n",
 				font_id);
 		}
 #endif // not NDEBUG
@@ -428,22 +429,22 @@ namespace gameswf
 			&& (header & 0x0FFFFFF) != 0x00535743)
 		{
 			// ERROR
-			log_error("gameswf::movie_def_impl::read() -- file does not start with a SWF header!\n");
+			CCLOG("gameswf::movie_def_impl::read() -- file does not start with a SWF header!\n");
 			return;
 		}
 		bool	compressed = (header & 255) == 'C';
 
-		IF_VERBOSE_PARSE(log_msg("version = %d, file_length = %d\n", m_version, file_length));
+		CCLOG("version = %d, file_length = %d\n", m_version, file_length);
 
 		m_zlib_in = NULL;
 		if (compressed)
 		{
 #if TU_CONFIG_LINK_TO_ZLIB == 0
-			log_error("movie_def_impl::read(): unable to read zipped SWF data; TU_CONFIG_LINK_TO_ZLIB is 0\n");
+			CCLOG("movie_def_impl::read(): unable to read zipped SWF data; TU_CONFIG_LINK_TO_ZLIB is 0\n");
 			return;
 #endif
 
-			IF_VERBOSE_PARSE(log_msg("file is compressed.\n"));
+            CCLOG("file is compressed.\n");
 
 			// Uncompress the input as we read it.
 			in = zlib_adapter::make_inflater(in);
@@ -466,7 +467,7 @@ namespace gameswf
 		m_init_action_list.resize(get_frame_count());
 
 		IF_VERBOSE_PARSE(m_frame_size.print());
-		IF_VERBOSE_PARSE(log_msg("frame rate = %f, frames = %d\n", m_frame_rate, get_frame_count()));
+		CCLOG("frame rate = %f, frames = %d\n", m_frame_rate, get_frame_count());
 
 		if (get_player()->use_separate_thread())
 		{
@@ -481,7 +482,7 @@ namespace gameswf
 	}
 
 	// is running in loader thread
-	void	movie_def_impl::read_tags()
+	void  movie_def_impl::read_tags()
 	{
 
 		while ((Uint32) m_str->get_position() < m_file_end_pos && get_break_loading() == false)
@@ -492,7 +493,7 @@ namespace gameswf
 			if (tag_type == 1)
 			{
 				// show frame tag -- advance to the next frame.
-				IF_VERBOSE_PARSE(log_msg("  show_frame\n"));
+				IF_VERBOSE_PARSE(CCLOG("  show_frame\n"));
 				inc_loading_frame();
 			}
 			else
@@ -506,7 +507,7 @@ namespace gameswf
 			else
 			{
 				// no tag loader for this tag type.
-				log_msg("*** no tag loader for type %d\n", tag_type);
+				CCLOG("*** no tag loader for type %d\n", tag_type);
 				IF_VERBOSE_PARSE(dump_tag_bytes(m_str));
 			}
 
@@ -518,7 +519,7 @@ namespace gameswf
 				{
 					// Safety break, so we don't read past the end of the
 					// movie.
-					log_msg("warning: hit stream-end tag, but not at the "
+					CCLOG("warning: hit stream-end tag, but not at the "
 						"end of the file yet; stopping for safety\n");
 					break;
 				}
@@ -618,12 +619,12 @@ namespace gameswf
 		in->read_bytes(header, 4);
 		if (header[0] != 'g' || header[1] != 's' || header[2] != 'c')
 		{
-			log_error("cache file does not have the correct format; skipping\n");
+			CCLOG("cache file does not have the correct format; skipping\n");
 			return;
 		}
 		else if (header[3] != CACHE_FILE_VERSION)
 		{
-			log_error(
+			CCLOG(
 				"cached data is version %d, but we require version %d; skipping\n",
 				int(header[3]), CACHE_FILE_VERSION);
 			return;
@@ -639,12 +640,12 @@ namespace gameswf
 		{
 			if (in->get_error() != TU_FILE_NO_ERROR)
 			{
-				log_error("error reading cache file (characters); skipping\n");
+				CCLOG("error reading cache file (characters); skipping\n");
 				return;
 			}
 			if (in->get_eof())
 			{
-				log_error("unexpected eof reading cache file (characters); skipping\n");
+				CCLOG("unexpected eof reading cache file (characters); skipping\n");
 				return;
 			}
 
@@ -659,7 +660,7 @@ namespace gameswf
 			}
 			else
 			{
-				log_error("sync error in cache file (reading characters)!  "
+				CCLOG("sync error in cache file (reading characters)!  "
 					"Skipping rest of cache data.\n");
 				return;
 			}

@@ -159,6 +159,8 @@ tu_file* CCGameSWF_file_opener (const char* url_or_path)
 //        //	printf("%s as %s\n", url, swfile.c_str());
 //		return new tu_file(swfile.c_str(), "rb");
 	}
+    //CCLOG("swf file name :%s",url_or_path);
+    //return new tu_file(  fopen( url_or_path, "rb")    , true);
 	return new tu_file(url_or_path, "rb");
 }
 

@@ -1132,10 +1132,10 @@ static void compute_triangulation_impl(
 
 #ifdef PROFILE_TRIANGULATE
 	uint64	clip_ticks = tu_timer::get_profile_ticks();
-	fprintf(stderr, "init poly = %1.6f sec\n", tu_timer::profile_ticks_to_seconds(init_ticks - start_ticks));
-	fprintf(stderr, "clip poly = %1.6f sec\n", tu_timer::profile_ticks_to_seconds(clip_ticks - init_ticks));
-	fprintf(stderr, "total for poly = %1.6f sec\n", tu_timer::profile_ticks_to_seconds(clip_ticks - start_ticks));
-	fprintf(stderr, "vert count = %d, verts clipped / sec = %f, verts processed / sec = %f\n",
+	fprintf(stderr, "cocos2d-x: init poly = %1.6f sec\n", tu_timer::profile_ticks_to_seconds(init_ticks - start_ticks));
+	fprintf(stderr, "cocos2d-x: clip poly = %1.6f sec\n", tu_timer::profile_ticks_to_seconds(clip_ticks - init_ticks));
+	fprintf(stderr, "cocos2d-x: total for poly = %1.6f sec\n", tu_timer::profile_ticks_to_seconds(clip_ticks - start_ticks));
+	fprintf(stderr, "cocos2d-x: vert count = %d, verts clipped / sec = %f, verts processed / sec = %f\n",
 		ts.m_verts.size(),
 		ts.m_verts.size() / tu_timer::profile_ticks_to_seconds(clip_ticks - init_ticks),
 		ts.m_verts.size() / tu_timer::profile_ticks_to_seconds(clip_ticks - start_ticks)

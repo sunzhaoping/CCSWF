@@ -181,7 +181,7 @@ namespace gameswf
 		int error = FT_Done_FreeType(m_lib);
 		if (error)
 		{
-			fprintf(stderr, "FreeType provider: can't close FreeType!  error = %d\n", error);
+			fprintf(stderr, "cocos2d-x: FreeType provider: can't close FreeType!  error = %d\n", error);
 		}
 		m_lib = NULL;
 	}
@@ -418,7 +418,7 @@ namespace gameswf
 		int	error = FT_Init_FreeType(&m_lib);
 		if (error)
 		{
-			fprintf(stderr, "FreeType provider: can't init FreeType!  error = %d\n", error);
+			fprintf(stderr, "cocos2d-x: FreeType provider: can't init FreeType!  error = %d\n", error);
 			return NULL;
 		}
 		return new glyph_freetype_provider();

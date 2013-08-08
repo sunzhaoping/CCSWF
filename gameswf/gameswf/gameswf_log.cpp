@@ -20,12 +20,12 @@ namespace gameswf
 	{
 		if (error)
 		{
-			fprintf(stderr, message);
+			fprintf(stderr,"cocos2d-x: %s", message);
 		}
 		else
 		{
 			// NORMAL or VERBOSE
-			printf(message);
+			printf("cocos2d-x: %s", message);
 		}
 	}
 

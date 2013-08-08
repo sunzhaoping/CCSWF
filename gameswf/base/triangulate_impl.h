@@ -661,7 +661,7 @@ int	poly<coord_t>::find_valid_bridge_vert(const  gameswf::array<vert_t>& sorted_
 	// Ugh!  No valid bridge vert.  Shouldn't happen with valid
 	// data.  For invalid data, just pick something and live with
 	// the intersection.
-	fprintf(stderr, "can't find bridge for vert %d!\n", v1);//xxxxxxxxx
+	fprintf(stderr, "cocos2d-x: can't find bridge for vert %d!\n", v1);//xxxxxxxxx
 
 	return m_leftmost_vert;
 }
@@ -1805,7 +1805,7 @@ void	poly_env<coord_t>::init(int path_count, const  gameswf::array<coord_t> path
 		{
 			// Bad input, odd number of coords.
 			assert(0);
-			fprintf(stderr, "path[%d] has odd number of coords (%d), dropping last value\n", i, path.size());//xxxx
+			fprintf(stderr, "cocos2d-x: path[%d] has odd number of coords (%d), dropping last value\n", i, path.size());//xxxx
 			path_size--;
 		}
 		for (int j = 0; j < path_size; j += 2)	// vertex coords come in pairs.
@@ -2182,7 +2182,7 @@ static void compute_triangulation(
 
 #ifdef PROFILE_TRIANGULATE
 	uint64	join_ticks = tu_timer::get_profile_ticks();
-	fprintf(stderr, "join poly = %1.6f sec\n", tu_timer::profile_ticks_to_seconds(join_ticks - start_ticks));
+	fprintf(stderr, "cocos2d-x: join poly = %1.6f sec\n", tu_timer::profile_ticks_to_seconds(join_ticks - start_ticks));
 #endif // PROFILE_TRIANGULATE
 
 // Debugging only: dump coords of joined poly.
@@ -2315,9 +2315,9 @@ static void compute_triangulation(
 	
 #ifdef PROFILE_TRIANGULATE
 	uint64	clip_ticks = tu_timer::get_profile_ticks();
-	fprintf(stderr, "clip poly = %1.6f sec\n", tu_timer::profile_ticks_to_seconds(clip_ticks - join_ticks));
-	fprintf(stderr, "total for poly = %1.6f sec\n", tu_timer::profile_ticks_to_seconds(clip_ticks - start_ticks));
-	fprintf(stderr, "vert count = %d, verts clipped / sec = %f\n",
+	fprintf(stderr, "cocos2d-x: clip poly = %1.6f sec\n", tu_timer::profile_ticks_to_seconds(clip_ticks - join_ticks));
+	fprintf(stderr, "cocos2d-x: total for poly = %1.6f sec\n", tu_timer::profile_ticks_to_seconds(clip_ticks - start_ticks));
+	fprintf(stderr, "cocos2d-x: vert count = %d, verts clipped / sec = %f\n",
 		input_vert_count,
 		input_vert_count / tu_timer::profile_ticks_to_seconds(clip_ticks - join_ticks));
 #endif // PROFILE_TRIANGULATE
@@ -2362,7 +2362,7 @@ void	recovery_process(
 			(*sorted_verts)[ev2].m_is_ear = true;
 			P->m_ear_count++;
 
-			fprintf(stderr, "recovery_process: self-intersecting sequence, treating %d as an ear\n", ev2);//xxxx
+			fprintf(stderr, "cocos2d-x: recovery_process: self-intersecting sequence, treating %d as an ear\n", ev2);//xxxx
 
 			// Resume regular processing.
 			return;
@@ -2418,7 +2418,7 @@ void	recovery_process(
 			(*sorted_verts)[vi].m_is_ear = true;
 			P->m_ear_count++;
 
-			fprintf(stderr, "recovery_process: found convex vert, treating %d as an ear\n", vi);//xxxx
+			fprintf(stderr, "cocos2d-x: recovery_process: found convex vert, treating %d as an ear\n", vi);//xxxx
 
 			// Resume regular processing.
 			return;
@@ -2438,7 +2438,7 @@ void	recovery_process(
 	(*sorted_verts)[vi].m_is_ear = true;
 	P->m_ear_count++;
 
-	fprintf(stderr, "recovery_process: treating random vert %d as an ear\n", vi);//xxxx
+	fprintf(stderr, "cocos2d-x: recovery_process: treating random vert %d as an ear\n", vi);//xxxx
 
 	// Resume.
 	return;

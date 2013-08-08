@@ -15,7 +15,11 @@
 #if TU_CONFIG_LINK_TO_JPEGLIB
 
 extern "C" {
-#include "platform/third_party/common/libjpeg/jpeglib.h"
+#ifdef __ANDROID__
+#include "platform/third_party/android/prebuilt/libjpeg/include/jpeglib.h"
+#else
+#include "platform/third_party/ios/libjpeg/jpeglib.h"
+#endif
 }
 
 

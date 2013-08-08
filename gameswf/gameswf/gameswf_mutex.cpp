@@ -4,7 +4,7 @@
 // whatever you want with it.
 
 #include "gameswf_mutex.h"
-
+#include <signal.h>
 #if TU_CONFIG_LINK_TO_THREAD == 1
 
 namespace gameswf
@@ -122,11 +122,20 @@ namespace gameswf
 		// blocks the calling thread until the specified threadid thread terminates. 
 		pthread_join(m_thread, NULL);
 	}
-
+    void thread_exit_handler(int sig)
+    {
+        printf("this signal is %d \n", sig);
+        pthread_exit(0);
+    }
 	void tu_thread::kill()
 	{
 #ifdef __ANDROID__
-       // pthread_exit(0);
+        struct sigaction actions;
+        memset(&actions, 0, sizeof(actions));
+        sigemptyset(&actions.sa_mask);
+        actions.sa_flags = 0;
+        actions.sa_handler = thread_exit_handler;
+        sigaction(SIGUSR1,&actions,NULL);
 #else
         pthread_cancel(m_thread);
 #endif

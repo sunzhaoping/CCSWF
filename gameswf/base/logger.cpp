@@ -33,10 +33,10 @@ namespace logger
 	void standard_logger(log_type e, const char* message)
 	{
 		if (e == ERROR) {
-			fprintf(stderr, message);
+			fprintf(stderr,"cocos2d-x: %s", message);
 		} else {
 			// NORMAL or VERBOSE
-			printf(message);
+			printf("cocos2d-x: %s",message);
 		}
 	}
 
