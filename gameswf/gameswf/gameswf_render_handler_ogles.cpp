@@ -352,12 +352,14 @@ const char* TextureFragmentShader = STRINGIFY(
     gl_FragColor = texture2D(u_texture, v_texCoord);
 }
                                               );
-
+#ifndef CHECK_GL_ERROR_DEBUG
 #ifdef DEBUG
 #define CHECK_GL_ERROR_DEBUG() ({ GLenum __error = glGetError(); if(__error) printf("OpenGL error 0x%04X in %s %d\n", __error, __FUNCTION__, __LINE__); })
 #else
 #define CHECK_GL_ERROR_DEBUG()
 #endif
+#endif
+
 enum {
 	kVertexAttrib_Position,
 	kVertexAttrib_Color,
@@ -491,6 +493,7 @@ struct render_handler_ogles : public gameswf::render_handler
     m_display_width(0),
     m_display_height(0)
 	{
+        m_reload_shader = false;
         if(m_ColorProgram != 0){
             return;
         }
@@ -619,7 +622,6 @@ struct render_handler_ogles : public gameswf::render_handler
 		// Push our style into OpenGL.
 		{
 			assert(m_mode != INVALID);
-			
 			if (m_mode == COLOR)
 			{
                 useProgram(m_ColorProgram);
@@ -1080,6 +1082,35 @@ struct render_handler_ogles : public gameswf::render_handler
 	void	draw_mesh_primitive(int primitive_type, const void* coords, int vertex_count)
 	// Helper for draw_mesh_strip and draw_triangle_list.
 	{
+        if ( glIsProgram( m_ColorProgram ) != GL_TRUE || m_reload_shader){
+            m_ColorProgram = BuildProgram(1);
+            uColorSlot = glGetUniformLocation(m_ColorProgram, "u_color");
+            projectionUniformC = glGetUniformLocation(m_ColorProgram, "Projection");
+            modelviewUniformC = glGetUniformLocation(m_ColorProgram, "u_MVPMatrix");
+
+            glEnableVertexAttribArray(kVertexAttrib_Position);
+            glEnableVertexAttribArray(kVertexAttrib_Color);
+            glEnableVertexAttribArray(kVertexAttrib_TexCoords);
+            CHECK_GL_ERROR_DEBUG();
+        }
+        
+        if ( glIsProgram( m_TextureProgram ) != GL_TRUE || m_reload_shader){
+            m_TextureProgram = BuildProgram(2);
+            uTextureSlot = glGetUniformLocation(m_TextureProgram, "u_texture");
+            projectionUniformT = glGetUniformLocation(m_TextureProgram, "Projection");
+            modelviewUniformT = glGetUniformLocation(m_TextureProgram, "u_MVPMatrix");
+            glEnableVertexAttribArray(kVertexAttrib_Position);
+            glEnableVertexAttribArray(kVertexAttrib_Color);
+            glEnableVertexAttribArray(kVertexAttrib_TexCoords);
+            m_reload_shader = false;
+            CHECK_GL_ERROR_DEBUG();
+        }
+        
+        if(m_current_styles[LEFT_STYLE].m_bitmap_info != NULL &&
+           glIsTexture(((bitmap_info_ogl*)(m_current_styles[LEFT_STYLE].m_bitmap_info))->m_texture_id) != GL_TRUE  ){
+            ((bitmap_info_ogl*)(m_current_styles[LEFT_STYLE].m_bitmap_info))->m_texture_id = 0;
+        }
+        
         //        return;
 		// Set up current style.
 		m_current_styles[LEFT_STYLE].apply();
@@ -1091,7 +1122,7 @@ struct render_handler_ogles : public gameswf::render_handler
         
         //        apply_matrix(m_current_matrix);
         ApplyMatrix(m_current_matrix);
-        
+
         glVertexAttribPointer(kVertexAttrib_Position,2, GL_SHORT,GL_FALSE, 0, coords);
         //        float fcoords[8];
         //        short icoords[8];
@@ -1152,6 +1183,35 @@ struct render_handler_ogles : public gameswf::render_handler
 	void	draw_line_strip(const void* coords, int vertex_count)
 	// Draw the line strip formed by the sequence of points.
 	{
+        if ( glIsProgram( m_ColorProgram ) != GL_TRUE||m_reload_shader ){
+            m_ColorProgram = BuildProgram(1);
+            uColorSlot = glGetUniformLocation(m_ColorProgram, "u_color");
+            projectionUniformC = glGetUniformLocation(m_ColorProgram, "Projection");
+            modelviewUniformC = glGetUniformLocation(m_ColorProgram, "u_MVPMatrix");
+            glEnableVertexAttribArray(kVertexAttrib_Position);
+             glEnableVertexAttribArray(kVertexAttrib_Color);
+            glEnableVertexAttribArray(kVertexAttrib_TexCoords);
+            CHECK_GL_ERROR_DEBUG();
+        }
+        
+        if ( glIsProgram( m_TextureProgram ) != GL_TRUE||m_reload_shader ){
+            m_TextureProgram = BuildProgram(2);
+            uTextureSlot = glGetUniformLocation(m_TextureProgram, "u_texture");
+            projectionUniformT = glGetUniformLocation(m_TextureProgram, "Projection");
+            modelviewUniformT = glGetUniformLocation(m_TextureProgram, "u_MVPMatrix");
+            glEnableVertexAttribArray(kVertexAttrib_Position);
+            glEnableVertexAttribArray(kVertexAttrib_Color);
+            glEnableVertexAttribArray(kVertexAttrib_TexCoords);
+            m_reload_shader = false;
+            CHECK_GL_ERROR_DEBUG();
+        }
+        
+        
+        if(m_current_styles[LINE_STYLE].m_bitmap_info != NULL &&
+          glIsTexture(((bitmap_info_ogl*)(m_current_styles[LINE_STYLE].m_bitmap_info))->m_texture_id) != GL_TRUE  ){
+            ((bitmap_info_ogl*)(m_current_styles[LINE_STYLE].m_bitmap_info))->m_texture_id = 0;
+        }
+        
         //        return;
         
 		// Set up current style.
@@ -1180,7 +1240,6 @@ struct render_handler_ogles : public gameswf::render_handler
         //        ApplyOrtho(matrixProject);
         
         ApplyMatrix(m_current_matrix);
-        
         
         glVertexAttribPointer(kVertexAttrib_Position,2, GL_SHORT,GL_FALSE, 0, coords);
         
@@ -1217,6 +1276,32 @@ struct render_handler_ogles : public gameswf::render_handler
 	{
         //        return;
 		assert(bi);
+        
+        if ( glIsProgram( m_TextureProgram ) != GL_TRUE || m_reload_shader){
+            m_TextureProgram = BuildProgram(2);
+            uTextureSlot = glGetUniformLocation(m_TextureProgram, "u_texture");
+            projectionUniformT = glGetUniformLocation(m_TextureProgram, "Projection");
+            modelviewUniformT = glGetUniformLocation(m_TextureProgram, "u_MVPMatrix");
+
+            glEnableVertexAttribArray(kVertexAttrib_Position);
+            glEnableVertexAttribArray(kVertexAttrib_Color);
+            glEnableVertexAttribArray(kVertexAttrib_TexCoords);
+            CHECK_GL_ERROR_DEBUG();
+        }
+        
+        if ( glIsProgram( m_ColorProgram ) != GL_TRUE || m_reload_shader ){
+            m_ColorProgram = BuildProgram(1);
+            uColorSlot = glGetUniformLocation(m_ColorProgram, "u_color");
+            projectionUniformC = glGetUniformLocation(m_ColorProgram, "Projection");
+            modelviewUniformC = glGetUniformLocation(m_ColorProgram, "u_MVPMatrix");
+            m_reload_shader = false;
+            CHECK_GL_ERROR_DEBUG();
+        }
+
+        if(bi && glIsTexture(((bitmap_info_ogl*)bi)->m_texture_id) != GL_TRUE){
+            ((bitmap_info_ogl*)bi)->m_texture_id = 0;
+        }
+        
         useProgram(m_TextureProgram);
         
 		bi->layout(uTextureSlot);
@@ -1274,9 +1359,6 @@ struct render_handler_ogles : public gameswf::render_handler
         CHECK_GL_ERROR_DEBUG();
         
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-        
-        
-        
 	}
 	
 	bool test_stencil_buffer(const gameswf::rect& bound, Uint8 pattern)
@@ -1781,8 +1863,8 @@ void bitmap_info_ogl::layout(GLuint uTextureSlot)
 				assert(0);
 		}
         
-		delete m_suspended_image;
-		m_suspended_image = NULL;
+		//delete m_suspended_image;
+		//m_suspended_image = NULL;
 	}
 	else
 	{

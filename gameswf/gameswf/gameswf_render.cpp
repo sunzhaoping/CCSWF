@@ -28,7 +28,6 @@ namespace gameswf
 		return s_render_handler;
 	}
 
-
 	namespace render
 	{
 		struct bogus_bi : public bitmap_info

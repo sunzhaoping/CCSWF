@@ -13,9 +13,11 @@ static void     CCGameSWF_log_handler           (bool error, const char* message
 
 #pragma mark - GameSWF implementation
 
+static GameSWF *s_ccGameSWF_sharedInstance = NULL;
+
 GameSWF* GameSWF::sharedInstance()
 {
-    static GameSWF *s_ccGameSWF_sharedInstance = NULL;
+
     if (!s_ccGameSWF_sharedInstance)
     {
         s_ccGameSWF_sharedInstance = new GameSWF();
@@ -32,7 +34,7 @@ bool GameSWF::init()
 #ifdef DEBUG
         gameswf::register_log_callback(&CCGameSWF_log_handler);
 #endif
-        gameswf::set_sound_handler(0);
+    gameswf::set_sound_handler(0);
         
         gameswf::render_handler* render = gameswf::create_render_handler_ogles();
         gameswf::set_render_handler(render);

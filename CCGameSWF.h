@@ -5,7 +5,6 @@
 class GameSWF : public cocos2d::Node
 {
     cocos2d::Array *m_fscommandListeners;
-
 public:
     static GameSWF* sharedInstance();
     void addFscommandResponder( int responder,cocos2d::String* movieName);

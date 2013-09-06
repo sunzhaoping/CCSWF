@@ -30,7 +30,6 @@ namespace gameswf
 {
 
 	struct sound;
-
 	struct openal_sound_handler : public sound_handler
 	{
 		ALCdevice* m_device;

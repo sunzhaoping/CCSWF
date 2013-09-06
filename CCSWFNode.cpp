@@ -58,16 +58,44 @@ bool CCSWFNode_imp::initWithSWFFile(const char *file)
 
 SWFNode::SWFNode()
 {
-
+    
+   m_image = new Image();
+#if CC_ENABLE_CACHE_TEXTURE_DATA
+    // Listen this event to save render texture before come to background.
+    // Then it can be restored after coming to foreground on Android.
+    NotificationCenter::getInstance()->addObserver(this,
+                                                   callfuncO_selector(SWFNode::onToBackground),
+                                                   EVENT_COME_TO_BACKGROUND,
+                                                   NULL);
+    
+    NotificationCenter::getInstance()->addObserver(this,
+                                                   callfuncO_selector(SWFNode::onToForeground),
+                                                   EVNET_COME_TO_FOREGROUND, // this is misspelt
+                                                   NULL);
+#endif
 }
+
 SWFNode::~SWFNode()
 {
     this->stopAction();
     this->removeFromParentAndCleanup(true);
     ((CCSWFNode_imp*)this->imp)->m_movie = NULL;
-     ((CCSWFNode_imp*)this->imp)->m_player = NULL;
-    
+    ((CCSWFNode_imp*)this->imp)->m_player = NULL;
     delete imp;
+#if CC_ENABLE_CACHE_TEXTURE_DATA
+    NotificationCenter::getInstance()->removeObserver(this, EVENT_COME_TO_BACKGROUND);
+    NotificationCenter::getInstance()->removeObserver(this, EVNET_COME_TO_FOREGROUND);
+#endif
+}
+
+
+void SWFNode::setFrame(int frameNo){
+    ((CCSWFNode_imp*)this->imp)->m_movie->goto_frame(frameNo);
+}
+
+
+int SWFNode::getFrame(){
+    return ((CCSWFNode_imp*)this->imp)->m_movie->get_current_frame();
 }
 
 cocos2d::String* SWFNode::movieName()
@@ -75,7 +103,7 @@ cocos2d::String* SWFNode::movieName()
     return cocos2d::String::createWithFormat("%s",  ((CCSWFNode_imp*)this->imp)->m_movie->m_movie->m_name.c_str());
 }
 
-void SWFNode::setMovieName(char *movieName)
+void SWFNode::setMovieName(const char *movieName)
 {
      ((CCSWFNode_imp*)this->imp)->m_movie->m_movie->m_name = movieName;// UTF8String];
 }
@@ -261,183 +289,15 @@ void SWFNode::update(float dt)
         }
     }
 }
-#define STRINGIFY(A)  #A
-const char* ColorVertexShader1 = STRINGIFY(
-attribute vec4 a_position;
-uniform mat4 Projection;
-uniform mat4 u_MVPMatrix;
-void main(void)
-{
-    vec4 tmp;
-    tmp =  Projection * u_MVPMatrix * a_position;
-//    tmp = u_MVPMatrix * a_position;
-//    tmp = a_position;
-    
-    //    tmp.x *= -1.0;
-//    tmp.y *= -1.0;
-    gl_Position = tmp;
-    
-}
-);
-
-const char* ColorFragmentShader1 = STRINGIFY(
-uniform lowp vec4 u_color;
-                                            
-void main(void)
-{
-    gl_FragColor = u_color;
-}
-);
-unsigned int m_currentProgram = 0;
-
-void ApplyOrtho(float maxX, float maxY)
-{
-    
-    //        maxX = 1024*20/2;
-    //        maxY = 768*20/2;
-    float a = 1.0f / maxX;
-    float b = 1.0f / maxY;
-    float ortho[16] = {
-        a, 0,  0, 0,
-        0, b,  0, 0,
-        0, 0, -1, 0,
-        0, 0,  0, 1
-    };
-    
-    GLint projectionUniform = glGetUniformLocation(m_currentProgram, "Projection");
-    glUniformMatrix4fv(projectionUniform, 1, 0, &ortho[0]);
-    CHECK_GL_ERROR_DEBUG();
-}
-void ApplyMatrix()
-{
-    float	mat[16]={
-//        1.0f/512,    0,              0,              0,
-//        0,              1.0f/384,    0,              0,
-//        0,0,-0.000976562,   0,
-//        -0.273438,-0.234375,0,1,
-        
-        1/512,0,0,0,
-        0,-1/384,0,0,
-        0,0,-1/1024,0,
-//        0,0,0,1,
-        -372,-474,0,1,
-    };
-
-    GLint modelviewUniform = glGetUniformLocation(m_currentProgram, "u_MVPMatrix");
-    glUniformMatrix4fv(modelviewUniform, 1, 0, mat);
-    CHECK_GL_ERROR_DEBUG();
-}
-static void ApplyColor()
-{
-    GLfloat color[4];
-    {
-        color[0] = 0.5;
-        color[1] = 0.5;
-        color[2] = 1.0;
-        color[3] = 1.0;
-    }
-    
-    GLint lineColorSlot = glGetUniformLocation(m_currentProgram, "u_color");
-    glUniform4fv(lineColorSlot, 1, color);
-    CHECK_GL_ERROR_DEBUG();
-    
-}
-GLuint BuildShader(const char* source, GLenum shaderType)
-{
-    GLuint shaderHandle = glCreateShader(shaderType);
-    glShaderSource(shaderHandle, 1, &source, 0);
-    glCompileShader(shaderHandle);
-    
-    GLint compileSuccess;
-    glGetShaderiv(shaderHandle, GL_COMPILE_STATUS, &compileSuccess);
-    
-    if (compileSuccess == GL_FALSE) {
-        GLchar messages[256];
-        glGetShaderInfoLog(shaderHandle, sizeof(messages), 0, &messages[0]);
-        CCLOG("%s", messages);
-        exit(1);
-    }
-    
-    return shaderHandle;
-}
-
-GLuint BuildProgram(const char* vertexShaderSource,
-                    const char* fragmentShaderSource) 
-{
-    GLuint vertexShader = BuildShader(vertexShaderSource, GL_VERTEX_SHADER);
-    GLuint fragmentShader = BuildShader(fragmentShaderSource, GL_FRAGMENT_SHADER);
-    
-    GLuint programHandle = glCreateProgram();
-    glAttachShader(programHandle, vertexShader);
-    glAttachShader(programHandle, fragmentShader);
-    glLinkProgram(programHandle);
-    
-    GLint linkSuccess;
-    glGetProgramiv(programHandle, GL_LINK_STATUS, &linkSuccess);
-    if (linkSuccess == GL_FALSE) {
-        GLchar messages[256];
-        glGetProgramInfoLog(programHandle, sizeof(messages), 0, &messages[0]);
-        CCLOG("%s", messages);
-        
-        exit(1);
-    }
-    
-    return programHandle;
-}
-void render()
-{
-    m_currentProgram = BuildProgram(ColorVertexShader1, ColorFragmentShader1);
-    CHECK_GL_ERROR_DEBUG();
-    
-    kmMat4 matrixP;
-	kmMat4 matrixMV;
-	kmMat4 matrixMVP;
-	
-	kmGLGetMatrix(KM_GL_PROJECTION, &matrixP );
-	kmGLGetMatrix(KM_GL_MODELVIEW, &matrixMV );
-	
-	kmMat4Multiply(&matrixMVP, &matrixP, &matrixMV);
-    
-#if CC_ENABLE_GL_STATE_CACHE
-    GL::useProgram(0);
-#endif
-    ApplyColor();
-//    ApplyOrtho(512, 384);
-//    ApplyMatrix();
-    
-    GLint projectionUniform = glGetUniformLocation(m_currentProgram, "Projection");
-    glUniformMatrix4fv(projectionUniform, 1, 0, &matrixP.mat[0]);
-    CHECK_GL_ERROR_DEBUG();
-
-    GLint modelviewUniform = glGetUniformLocation(m_currentProgram, "u_MVPMatrix");
-    glUniformMatrix4fv(modelviewUniform, 1, 0, &matrixMV.mat[0]);
-    CHECK_GL_ERROR_DEBUG();
-    
-    GLuint positionSlot = glGetAttribLocation(m_currentProgram, "a_position");
-    glEnableVertexAttribArray(positionSlot);
-    float fcoords[8] ={
-        80,-60,
-        5680,-60,
-        80,3540,
-        5680,3540,
-    };
-    glVertexAttribPointer(positionSlot,2, GL_FLOAT,GL_FALSE, 0, fcoords);
-    CHECK_GL_ERROR_DEBUG();
-    
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    CHECK_GL_ERROR_DEBUG();
-}
-
-
 
 void SWFNode::draw()
 {
     if (! isRuning) {
         return;
     }
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     
     kmMat4 matrixP;
 	kmMat4 matrixMV;
@@ -447,16 +307,29 @@ void SWFNode::draw()
 	kmGLGetMatrix(KM_GL_MODELVIEW, &matrixMV );
     kmMat4Multiply(&matrixMVP, &matrixP, &matrixMV);
     
-#if CC_ENABLE_GL_STATE_CACHE
-    GL::useProgram(0);//valid program is NON_ZERO unsigned int
-#endif
+    GL::useProgram(0);
+
 	((CCSWFNode_imp*)this->imp)->m_movie->display(&matrixMVP.mat[0]);
     CHECK_GL_ERROR_DEBUG();
 
-//    render();
+    //render();
     
     glBlendFunc(CC_BLEND_SRC, CC_BLEND_DST);
 
+}
+
+void SWFNode::onToBackground(cocos2d::Object *obj)
+{
+#if CC_ENABLE_CACHE_TEXTURE_DATA
+gameswf::get_render_handler()->m_reload_shader = true;
+#endif
+}
+
+void SWFNode::onToForeground(cocos2d::Object *obj)
+{
+#if CC_ENABLE_CACHE_TEXTURE_DATA
+
+#endif
 }
 
 //@end

@@ -725,6 +725,7 @@ namespace gameswf
 	// instance to set_render_handler().
 	struct render_handler
 	{
+        bool m_reload_shader;
 		virtual ~render_handler() {}
 
 		// Your handler should return these with a ref-count of 0.  (@@ is that the right policy?)

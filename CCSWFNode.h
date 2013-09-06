@@ -28,6 +28,7 @@ private:
     
     bool repeat;
     int iFrameCount;
+    Image *m_image;
 public:
     SWFNode();
     ~SWFNode();
@@ -38,7 +39,9 @@ public:
     
     
     cocos2d::String* movieName();
-    void setMovieName(char *movieName);
+    void setMovieName(const char *movieName);
+    void setFrame(int frameNo);
+    int getFrame();
 //    SWFNode(char* file);
     static SWFNode* create(const char* file);
     bool initWithSWFFile(const char* file);
@@ -65,8 +68,16 @@ public:
 
     void setRepeat(bool flag);
     bool getRepeat();
-
-
+    
+    /** Listen "come to background" message, and save render texture.
+     It only has effect on Android.
+     */
+    void onToBackground(Object *obj);
+    
+    /** Listen "come to foreground" message and restore the frame buffer object
+     It only has effect on Android.
+     */
+    void onToForeground(Object *obj);
 
 };
 
